@@ -1,6 +1,6 @@
 // src/components/AppointmentForm.tsx
 import { TextField, Button, Container } from "@mui/material";
-import React , {useState} from "react";
+import React, { useState } from "react";
 interface AppointmentFormProps {
   onSubmit: (hospitalId: string, branchId: string, departmentId: string, selectedDate: string) => void;
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getDoctorList = async (hospitalId: string, branchId: string, departmentId: string) => {
-    const xml = `
+  const xml = `
       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
         <soap:Body>
           <GetDoctorListRequest xmlns="http://erandevu.bizmed.com.tr:8092/erandevu.php">
@@ -18,12 +18,12 @@ export const getDoctorList = async (hospitalId: string, branchId: string, depart
       </soap:Envelope>
     `;
 
-    const response = await axios.post("/erandevu.php", xml, {
-        headers: {
-            "Content-Type": "text/xml;charset=UTF-8",
-            SOAPAction: "",
-        },
-    });
+  const response = await axios.post("/erandevu.php", xml, {
+    headers: {
+      "Content-Type": "text/xml;charset=UTF-8",
+      SOAPAction: "",
+    },
+  });
 
-    return response.data;
+  return [response.data];
 };

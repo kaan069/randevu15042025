@@ -1,45 +1,46 @@
 // src/pages/HospitalPage.tsx
 import { useState, useEffect } from "react";
-import HospitalList from "../../components/HospitalList";
-import BranchList from "../../components/BranchList";
-import DepartmentList from "../../components/DepartmentList";
-import DoctorList from "../../components/DoctorList";
-import AppointmentForm from "../../components/AppointmentForm";
+import HospitalList from "../../components/appointment/HospitalList";
+import BranchList from "../../components/appointment/BranchList";
+import DepartmentList from "../../components/appointment/DepartmentList";
+import DoctorList from "../../components/appointment/DoctorList";
+import AppointmentForm from "../../components/appointment/AppointmentForm";
 import { getHospitalList } from "../../api/soap/SoapGetHospitalList";
 import { getBranchList } from "../../api/soap/SoapGetBranchList";
 import { getDepartmentList } from "../../api/soap/SoapGetDepartmentList";
 import { getDoctorList } from "../../api/soap/SoapGetDoctorList";
 import { parseHospitalListXML, parseBranchListXML, parseDepartmentListXML, parseDoctorListXML } from "../../utils/xmlParser";
 
+
 type Hospital = {
-    id: string;
-    name: string;
-    availability: string;
-  };
-  
-  type Branch = {
-    id: string;
-    name: string;
-    availability: string;
-  };
-  
-  type Department = {
-    id: string;
-    name: string;
-    availability: string;
-  };
-  type Doctor = {
-    id: string;
-    name: string;
-    availability: string;
-    deptName: string ;
-    branchName:string
-  };
+  id: string;
+  name: string;
+  availability: string;
+};
+
+type Branch = {
+  id: string;
+  name: string;
+  availability: string;
+};
+
+type Department = {
+  id: string;
+  name: string;
+  availability: string;
+};
+type Doctor = {
+  id: string;
+  name: string;
+  availability: string;
+  deptName: string;
+  branchName: string
+};
 
 const HospitalPage = () => {
-    const [hospitals, setHospitals] = useState<Hospital[]>([]);
-    const [branches, setBranches] = useState<Branch[]>([]);
-    const [departments, setDepartments] = useState<Department[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
 
   const [selectedHospitalId, setSelectedHospitalId] = useState<string | null>(null);
@@ -48,7 +49,7 @@ const HospitalPage = () => {
 
   useEffect(() => {
     const fetchHospitals = async () => {
-      const xml = await getHospitalList();
+      const [xml] = await getHospitalList();
       const parsed = parseHospitalListXML(xml);
       setHospitals(parsed);
     };
@@ -58,27 +59,27 @@ const HospitalPage = () => {
 
   const handleHospitalClick = async (hospitalId: string) => {
     setSelectedHospitalId(hospitalId);
-    const xml = await getBranchList(hospitalId);
+    const [xml] = await getBranchList(hospitalId);
     const parsed = parseBranchListXML(xml);
     setBranches(parsed);
   };
 
   const handleBranchClick = async (branchId: string) => {
     setSelectedBranchId(branchId);
-    const xml = await getDepartmentList(selectedHospitalId!, branchId);
+    const [xml] = await getDepartmentList(selectedHospitalId!, branchId);
     const parsed = parseDepartmentListXML(xml);
     setDepartments(parsed);
   };
 
-  const handleDepartmentClick = async (departmentId: string) => {
-    setSelectedDepartmentId(departmentId);
-    const xml = await getDoctorList(selectedHospitalId!, selectedBranchId!, departmentId);
+  const handleDepartmentClick = async (selectedDepartmentId: string) => {
+    setSelectedDepartmentId(selectedDepartmentId);
+    const [xml] = await getDoctorList(selectedHospitalId!, selectedBranchId!, selectedDepartmentId);
     const parsed = parseDoctorListXML(xml);
     setDoctors(parsed);
   };
 
-  const handleAppointmentSubmit = (hospitalId: string, branchId: string, departmentId: string, selectedDate: string) => {
-    console.log("Randevu verileri:", { hospitalId, branchId, departmentId, selectedDate });
+  const handleAppointmentSubmit = (hospitalId: string, branchId: string, selectedDepartmentId: string, selectedDate: string) => {
+    console.log("Randevu verileri:", { hospitalId, branchId, selectedDepartmentId, selectedDate });
     // Backend'e gönderme işlemi yapılacak
   };
 

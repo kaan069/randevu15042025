@@ -1,69 +1,61 @@
-import { Grid, Card, CardContent, Typography, Button } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import { Box, Grid, Button, Typography } from "@mui/material";
+//import NewAppointment from "../../components/Home/NewAppointment";
+import AppointmentCancellation from "../../components/Home/AppointmentCancellation";
+import { useNavigate } from "react-router-dom";
+import NewAppointmentPage from "../../pages/NewAppointmentPage";
+import AvailableAppointmentPage from "../../pages/AvailableAppoimentPage";
 
 const HomePage = () => {
+  const [activeComponent] = useState<string | null>(null);
+  const navigate = useNavigate();
+
   return (
-    <Grid container spacing={3} justifyContent="center">
-      <Grid item xs={12} sm={6} md={4} component="div">
-        <Card sx={{ maxWidth: "100%", boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h5" component="div" align="center" gutterBottom>
-              Yeni Randevu
-            </Typography>
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{ marginTop: 2 }}
-              onClick={() => console.log("Yeni randevu seçildi")}
-            >
-              Randevu Oluştur
-            </Button>
-          </CardContent>
-        </Card>
+    <Box>
+      {/* Logo */}
+      <Grid container justifyContent="center" alignItems="center" direction="column" sx={{ marginBottom: 3 }}>
+        <img src="/logo512.png" alt="Logo" style={{ maxWidth: "50px" }} />
       </Grid>
 
-      <Grid item xs={12} sm={6} md={4} component="div">
-        <Card sx={{ maxWidth: "100%", boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h5" component="div" align="center" gutterBottom>
-              Randevu Sorgulama ve İptal
-            </Typography>
-            <Button
-              fullWidth
-              variant="contained"
-              color="secondary"
-              size="large"
-              sx={{ marginTop: 2 }}
-              onClick={() => console.log("Randevu sorgulama ve iptal seçildi")}
-            >
-              Randevu Sorgula
-            </Button>
-          </CardContent>
-        </Card>
-      </Grid>
+      {/* Ana Başlık */}
+      <Typography variant="h4" align="center" gutterBottom>
+        Yeni Randevu Oluştur
+      </Typography>
 
-      <Grid item xs={12} sm={6} md={4} component="div">
-        <Card sx={{ maxWidth: "100%", boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h5" component="div" align="center" gutterBottom>
-              Müsait Randevu Durumu
-            </Typography>
-            <Button
-              fullWidth
-              variant="contained"
-              color="success"
-              size="large"
-              sx={{ marginTop: 2 }}
-              onClick={() => console.log("Müsait randevu durumu seçildi")}
-            >
-              Durumu Kontrol Et
-            </Button>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+      {/* Butonlar */}
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/new-appointment")}
+        >
+          Yeni Randevu Oluştur
+        </Button>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => navigate("/cancel-appointment")}
+        >
+          Randevu Sorgula ve İptal Et
+        </Button>
+
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: "green", ":hover": { backgroundColor: "#2e7d32" } }}
+          onClick={() => navigate("/available-appointments")}
+        >
+          Durumu Kontrol Et
+        </Button>
+      </Box>
+
+      {/* Tıklanan Component */}
+      <Box sx={{ mt: 5 }}>
+        {activeComponent === "new" && <NewAppointmentPage />}
+        {activeComponent === "cancel" && <AppointmentCancellation />}
+        {activeComponent === "available" && <AvailableAppointmentPage />}
+      </Box>
+    </Box>
   );
 };
 

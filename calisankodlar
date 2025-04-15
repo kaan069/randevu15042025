@@ -1,0 +1,210 @@
+
+// import React, { useEffect } from "react";
+// import {
+//     Box,
+//     Typography,
+//     Snackbar,
+//     Alert,
+//     Button,
+//     SelectChangeEvent,
+// } from "@mui/material";
+// import { useNavigate } from "react-router-dom";
+
+// import {
+//     fetchHospitals,
+//     fetchBranches,
+//     fetchDepartments,
+//     fetchDoctors,
+//     fetchEmptySlots,
+// } from "../state/appointmentState";
+
+// import { useAppointmentState } from "../state/appointmentState";
+// import NewAppointmentForm from "../components/Home/NewAppointmentForm";
+// import NewAppointmentModal from "../components/Home/NewAppointmentModal";
+// import SearchableSelect from "../components/common/SearchableSelect";
+
+// const NewAppointmentPage = () => {
+//     const navigate = useNavigate();
+
+//     const {
+//         hospitals, setHospitals,
+//         branches, setBranches,
+//         departments, setDepartments,
+//         doctors, setDoctors,
+
+//         selectedHospital, setSelectedHospital,
+//         selectedBranch, setSelectedBranch,
+//         selectedDepartment, setSelectedDepartment,
+//         selectedDoctor, setSelectedDoctor,
+//         selectedDate, setSelectedDate,
+
+//         isAvailable, setIsAvailable,
+//         showSuccess, setShowSuccess,
+//         showSummaryModal, setShowSummaryModal,
+//         appointmentInfo, setAppointmentInfo,
+//     } = useAppointmentState();
+
+//     // Hastaneleri yükle
+//     useEffect(() => {
+//         const loadHospitals = async () => {
+//             try {
+//                 const data = await fetchHospitals();
+//                 setHospitals(data);
+//             } catch (err) {
+//                 console.error("Hastaneler alınamadı", err);
+//             }
+//         };
+
+//         loadHospitals();
+//     }, [setHospitals]);
+
+//     const handleHospitalChange = async (event: SelectChangeEvent<string>) => {
+//         const hospitalId = event.target.value;
+//         setSelectedHospital(hospitalId);
+//         setSelectedBranch("");
+//         setSelectedDepartment("");
+//         setSelectedDoctor("");
+//         setDepartments([]);
+//         setDoctors([]);
+//         navigate(`/select-branch/${hospitalId}`);
+//         const data = await fetchBranches(hospitalId);
+//         setBranches(data);
+//     };
+
+//     const handleBranchChange = async (event: SelectChangeEvent<string>) => {
+//         const branchId = event.target.value;
+//         setSelectedBranch(branchId);
+//         setSelectedDepartment("");
+//         setSelectedDoctor("");
+//         setDoctors([]);
+
+//         const data = await fetchDepartments(selectedHospital, branchId);
+//         setDepartments(data);
+//     };
+
+//     const handleDepartmentChange = async (event: SelectChangeEvent<string>) => {
+//         const departmentId = event.target.value;
+//         setSelectedDepartment(departmentId);
+//         setSelectedDoctor("");
+
+//         const data = await fetchDoctors(selectedHospital, selectedBranch, departmentId);
+//         setDoctors(data);
+//     };
+
+//     const handleDateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+//         const date = e.target.value;
+//         setSelectedDate(date);
+//         setIsAvailable(null);
+
+//         if (selectedHospital && selectedDepartment && selectedDoctor) {
+//             const startTime = `${date}T00:00:00`;
+//             const endTime = `${date}T23:59:59`;
+
+//             try {
+//                 const available = await fetchEmptySlots(
+//                     selectedHospital,
+//                     selectedDepartment,
+//                     selectedDoctor,
+//                     startTime,
+//                     endTime,
+//                     date
+//                 );
+//                 setIsAvailable(available);
+//             } catch (err) {
+//                 console.error("Müsaitlik alınamadı", err);
+//                 setIsAvailable(false);
+//             }
+//         }
+//     };
+
+//     const handleSubmit = () => {
+//         const data = {
+//             hospital: selectedHospital,
+//             branch: selectedBranch,
+//             department: selectedDepartment,
+//             doctor: selectedDoctor,
+//             date: selectedDate,
+//         };
+
+//         setAppointmentInfo(data);
+//         setShowSummaryModal(true);
+//         setShowSuccess(true);
+
+//         // Formu sıfırla
+//         setSelectedHospital("");
+//         setSelectedBranch("");
+//         setSelectedDepartment("");
+//         setSelectedDoctor("");
+//         setSelectedDate("");
+//     };
+
+//     return (
+//         <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, px: 2 }}>
+//             <Button
+//                 variant="outlined"
+//                 color="secondary"
+//                 onClick={() => navigate("/home")}
+//                 sx={{ mb: 2 }}
+//             >
+//                 ← Ana Sayfaya Dön
+//             </Button>
+
+//             <Typography variant="h4" align="center" gutterBottom>
+//                 Yeni Randevu Oluştur
+//             </Typography>
+
+//             {/* 🔍 Arama ile şube seçimi */}
+//             <SearchableSelect
+//                 label="Şube"
+//                 options={hospitals}
+//                 value={selectedHospital}
+//                 onChange={(id) => {
+//                     setSelectedHospital(id);
+//                     navigate(`/select-branch/${id}`);
+//                 }}
+//             />
+
+//             {/* 🔽 Dropdown ile formdan da seçim yapılabilir */}
+//             <NewAppointmentForm
+//                 hospitals={hospitals}
+//                 branches={branches}
+//                 departments={departments}
+//                 doctors={doctors}
+//                 selectedHospital={selectedHospital}
+//                 selectedBranch={selectedBranch}
+//                 selectedDepartment={selectedDepartment}
+//                 selectedDoctor={selectedDoctor}
+//                 selectedDate={selectedDate}
+//                 isAvailable={isAvailable}
+//                 onHospitalChange={handleHospitalChange}
+//                 onBranchChange={handleBranchChange}
+//                 onDepartmentChange={handleDepartmentChange}
+//                 onDoctorChange={(e: any) => setSelectedDoctor(e.target.value)}
+//                 onDateChange={handleDateChange}
+//                 onSubmit={handleSubmit}
+//             />
+
+//             <Snackbar
+//                 open={showSuccess}
+//                 autoHideDuration={3000}
+//                 onClose={() => setShowSuccess(false)}
+//                 anchorOrigin={{ vertical: "top", horizontal: "center" }}
+//             >
+//                 <Alert onClose={() => setShowSuccess(false)} severity="success" sx={{ width: "100%" }}>
+//                     Randevu başarıyla oluşturuldu!
+//                 </Alert>
+//             </Snackbar>
+
+//             <NewAppointmentModal
+//                 open={showSummaryModal}
+//                 handleClose={() => setShowSummaryModal(false)}
+//                 appointmentData={appointmentInfo}
+//             />
+//         </Box>
+//     );
+// };
+
+// export default NewAppointmentPage;
+
+
+// -----------------------------bura NewAppointmentPage.tsx-----------------------------

@@ -29,23 +29,23 @@ export const parseHospitalListXML = (xmlStr: string): Hospital[] => {
 export const parseDepartmentListXML = (xmlStr: string) => {
     const parser = new DOMParser();
     const xml = parser.parseFromString(xmlStr, "text/xml");
-  
+
     const departmentNodes = xml.getElementsByTagName("GetDepartmentListResult");
     const departments: { id: string; name: string; availability: string }[] = [];
-  
+
     for (let i = 0; i < departmentNodes.length; i++) {
-      const node = departmentNodes[i];
-  
-      const id = node.getElementsByTagName("ID")[0]?.textContent || "";
-      const name = node.getElementsByTagName("Name")[0]?.textContent || "";
-      const availability = node.getElementsByTagName("Availability")[0]?.textContent || "";
-  
-      departments.push({ id, name, availability });
+        const node = departmentNodes[i];
+
+        const id = node.getElementsByTagName("ID")[0]?.textContent || "";
+        const name = node.getElementsByTagName("Name")[0]?.textContent || "";
+        const availability = node.getElementsByTagName("Availability")[0]?.textContent || "";
+
+        departments.push({ id, name, availability });
     }
-  
+
     return departments;
-  };
-  
+};
+
 export const parseBranchListXML = (xmlStr: string) => {
     const parser = new DOMParser();
     const xml = parser.parseFromString(xmlStr, "text/xml");
@@ -91,5 +91,31 @@ export const parseDoctorListXML = (xmlStr: string) => {
     }
 
     return doctors;
+};
+
+// utils/xmlParser.ts içine ekle
+export const parseEmptySlotsXML = (xmlStr: string, selectedDate: string): boolean => {
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlStr, "text/xml");
+
+    const normalizedDate = normalizeDate(selectedDate); // yyyy-MM-dd
+
+    const slotNodes = xml.getElementsByTagName("GetEmptySlotsForDoctorResult");
+
+    for (let i = 0; i < slotNodes.length; i++) {
+        const startTime = slotNodes[i].getElementsByTagName("StartTime")[0]?.textContent || "";
+
+        if (startTime.startsWith(normalizedDate)) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+// Yardımcı fonksiyonu da export et:
+export const normalizeDate = (input: string): string => {
+    const [day, month, year] = input.split(".");
+    return `${year}-${month}-${day}`;
 };
 
