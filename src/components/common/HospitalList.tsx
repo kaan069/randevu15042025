@@ -19,7 +19,7 @@ const HospitalList: React.FC<Props> = ({ hospitals, onSelect }) => {
         <List>
             {hospitals.map((hospital) => (
                 <ListItem key={hospital.id} disablePadding sx={{ mb: 2 }}>
-                    <Card sx={{ width: "100%" }}>
+                    <Card variant="outlined" sx={{ width: "100%" }}>
                         <ListItemButton onClick={() => onSelect(hospital.id)}>
                             <CardContent>
                                 <Typography variant="subtitle1" fontWeight={600}>

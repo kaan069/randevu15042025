@@ -1,27 +1,35 @@
-import { useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import NewAppointmentPage from "../../pages/newAppointment/NewAppointmentPage";
-import AvailableAppointmentPage from "../../pages/availableAppointment/AvailableAppoimentPage";
-import AppointmentCancellationPage from "../../pages/appointmentCancellation/AppointmentCancellationPage";
+import Logo from "../../components/shared/Logo";
 
 const HomePage = () => {
-  const [activeComponent] = useState<string | null>(null);
   const navigate = useNavigate();
 
   return (
-    <Box>
-
-      {/* Ana Başlık */}
-      <Typography variant="h4" align="center" gutterBottom>
-        Yeni Randevu Oluştur
-      </Typography>
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="50vh"
+      bgcolor="#f9f9f9"
+      px={2}
+    >
 
       {/* Butonlar */}
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={2}
+        width="100%"
+        maxWidth={300}
+      >
         <Button
           variant="contained"
           color="primary"
+          fullWidth
+          sx={{ py: 1.5, fontWeight: "bold", fontSize: "1rem" }}
           onClick={() => navigate("/new-appointment")}
         >
           Yeni Randevu Oluştur
@@ -30,6 +38,8 @@ const HomePage = () => {
         <Button
           variant="contained"
           color="secondary"
+          fullWidth
+          sx={{ py: 1.5, fontWeight: "bold", fontSize: "1rem" }}
           onClick={() => navigate("/cancel-appointment")}
         >
           Randevu Sorgula ve İptal Et
@@ -37,18 +47,20 @@ const HomePage = () => {
 
         <Button
           variant="contained"
-          sx={{ backgroundColor: "green", ":hover": { backgroundColor: "#2e7d32" } }}
+          fullWidth
+          sx={{
+            py: 1.5,
+            fontWeight: "bold",
+            fontSize: "1rem",
+            backgroundColor: "#2e7d32",
+            "&:hover": {
+              backgroundColor: "#1b5e20",
+            },
+          }}
           onClick={() => navigate("/available-appointments")}
         >
           Durumu Kontrol Et
         </Button>
-      </Box>
-
-      {/* Tıklanan Component */}
-      <Box sx={{ mt: 5 }}>
-        {activeComponent === "new" && <NewAppointmentPage />}
-        {activeComponent === "cancel" && <AppointmentCancellationPage />}
-        {activeComponent === "available" && <AvailableAppointmentPage />}
       </Box>
     </Box>
   );

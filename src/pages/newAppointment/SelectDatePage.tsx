@@ -17,6 +17,7 @@ import { useAppointmentState } from "../../state/appointmentState";
 import DoctorCard from "../../components/common/DoctorCard";
 import NewAppointmentModal from "../../components/modals/NewAppointmentModal";
 import SelectableDateCalendar from "../../components/ui/SelectableDateCalendar";
+import HorizontalDateSelector from "../../components/ui/HorizontalDateSelector";
 
 const SelectDatePage = () => {
     const { hospitalId, branchId, departmentId, doctorId } = useParams<{
@@ -142,9 +143,9 @@ const SelectDatePage = () => {
                 Randevu Tarihi Seç
             </Typography>
 
-            <SelectableDateCalendar
-                selectedDate={selectedDay}
-                onChange={handleDateChange}
+            <HorizontalDateSelector
+                selected={selectedDay?.format("YYYY-MM-DD") || ""}
+                onChange={(dateStr) => setSelectedDay(dayjs(dateStr))}
             />
 
             <Typography variant="h6" gutterBottom mt={4}>
