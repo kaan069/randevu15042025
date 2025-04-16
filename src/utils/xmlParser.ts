@@ -94,28 +94,23 @@ export const parseDoctorListXML = (xmlStr: string) => {
 };
 
 // utils/xmlParser.ts içine ekle
-export const parseEmptySlotsXML = (xmlStr: string, selectedDate: string): boolean => {
+// utils/parseEmptySlotsXML.ts
+export const parseEmptySlotsXML = (xmlStr: string): string[] => {
     const parser = new DOMParser();
     const xml = parser.parseFromString(xmlStr, "text/xml");
 
-    const normalizedDate = normalizeDate(selectedDate); // yyyy-MM-dd
+    const nodes = xml.getElementsByTagName("GetEmptySlotsForDoctorResult");
 
-    const slotNodes = xml.getElementsByTagName("GetEmptySlotsForDoctorResult");
+    const hours: string[] = [];
 
-    for (let i = 0; i < slotNodes.length; i++) {
-        const startTime = slotNodes[i].getElementsByTagName("StartTime")[0]?.textContent || "";
-
-        if (startTime.startsWith(normalizedDate)) {
-            return true;
+    for (let i = 0; i < nodes.length; i++) {
+        const startTime = nodes[i].getElementsByTagName("StartTime")[0]?.textContent;
+        if (startTime && startTime.includes("T")) {
+            hours.push(startTime); // string formatta: 2025-04-16T10:30:00
         }
     }
 
-    return false;
+    return hours;
 };
 
-// Yardımcı fonksiyonu da export et:
-export const normalizeDate = (input: string): string => {
-    const [day, month, year] = input.split(".");
-    return `${year}-${month}-${day}`;
-};
 

@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from "react";
+// src/pages/appointment/SelectDatePage.tsx
+import { useEffect, useState } from "react";
 import {
     Box,
     Typography,
     Button,
-    Grid,
     Snackbar,
     Alert,
-    TextField,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import { fetchEmptySlots } from "../state/appointmentState";
-import { useAppointmentState } from "../state/appointmentState";
-import DoctorCard from "../components/common/DoctorCard";
-import NewAppointmentModal from "../components/Home/NewAppointmentModal";
+import { Grid } from "@mui/material"; // ✅ doğru bu
 
+import { useParams, useNavigate } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
+import { fetchEmptySlots } from "../../state/appointmentState";
+import { fetchDoctors } from "../../state/appointmentState";
+import { useAppointmentState } from "../../state/appointmentState";
+import DoctorCard from "../../components/common/DoctorCard";
+import NewAppointmentModal from "../../components/modals/NewAppointmentModal";
+import SelectableDateCalendar from "../../components/ui/SelectableDateCalendar";
 
 const SelectDatePage = () => {
     const { hospitalId, branchId, departmentId, doctorId } = useParams<{
@@ -22,6 +25,7 @@ const SelectDatePage = () => {
         departmentId: string;
         doctorId: string;
     }>();
+
     const navigate = useNavigate();
 
     const {
@@ -30,25 +34,46 @@ const SelectDatePage = () => {
         setAppointmentInfo,
         showSummaryModal,
         setShowSummaryModal,
+        setDoctors
     } = useAppointmentState();
 
-    const [selectedDay, setSelectedDay] = useState<string>(""); // yyyy-mm-dd
+    const [selectedDay, setSelectedDay] = useState<Dayjs | null>(dayjs());
     const [timeSlots, setTimeSlots] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
 
+    // 💥 Doktor ID'yi int'e çeviriyoruz
     const selectedDoctor = doctors.find((doc) => doc.id === doctorId);
 
-    // Kullanıcı gün seçince o günün saatlerini getir
+
+    const handleDateChange = (newDate: Dayjs | null) => {
+        setSelectedDay(newDate);
+    };
+    useEffect(() => {
+        const loadDoctors = async () => {
+            if (!hospitalId || !branchId || !departmentId) return;
+
+            try {
+                const doctorsList = await fetchDoctors(hospitalId, branchId, departmentId);
+                setDoctors(doctorsList);
+            } catch (err) {
+                console.error("Doktorlar yüklenemedi:", err);
+            }
+        };
+
+        loadDoctors();
+    }, [hospitalId, branchId, departmentId, setDoctors]);
+    console.log("selectedDoctor:", selectedDoctor);
+
     useEffect(() => {
         const loadSlots = async () => {
             if (!selectedDay || !hospitalId || !departmentId || !doctorId) return;
 
             setLoading(true);
-            setSelectedDay("2025-04-15");
             try {
-                const startTime = `${selectedDay}T00:00:00`;
-                const endTime = `${selectedDay}T23:59:59`;
+                const dateStr = selectedDay.format("YYYY-MM-DD");
+                const startTime = `${dateStr}T00:00:00`;
+                const endTime = `${dateStr}T23:59:59`;
 
                 const availableSlots = await fetchEmptySlots(
                     hospitalId,
@@ -56,7 +81,7 @@ const SelectDatePage = () => {
                     doctorId,
                     startTime,
                     endTime,
-                    selectedDay
+                    dateStr
                 );
 
                 if (Array.isArray(availableSlots)) {
@@ -77,6 +102,7 @@ const SelectDatePage = () => {
 
     const handleSelectTime = (time: string) => {
         setSelectedDate(time);
+
         setAppointmentInfo({
             hospital: hospitalId || "",
             branch: branchId || "",
@@ -84,8 +110,11 @@ const SelectDatePage = () => {
             doctor: doctorId || "",
             date: time,
         });
+
         setShowSummaryModal(true);
     };
+    console.log("URL doctorId:", doctorId);
+    console.log("State doctors:", doctors);
 
     return (
         <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, px: 2 }}>
@@ -99,6 +128,7 @@ const SelectDatePage = () => {
                 ← Doktora Geri Dön
             </Button>
 
+            {/* ✅ Doktor Kartı */}
             {selectedDoctor && (
                 <DoctorCard
                     name={selectedDoctor.name}
@@ -108,19 +138,16 @@ const SelectDatePage = () => {
                 />
             )}
 
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom mt={4}>
                 Randevu Tarihi Seç
             </Typography>
 
-            <TextField
-                fullWidth
-                type="date"
-                value={selectedDay}
-                onChange={(e) => setSelectedDay(e.target.value)}
-                sx={{ mb: 3 }}
+            <SelectableDateCalendar
+                selectedDate={selectedDay}
+                onChange={handleDateChange}
             />
 
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom mt={4}>
                 Saat Seç
             </Typography>
 
@@ -129,18 +156,38 @@ const SelectDatePage = () => {
             ) : timeSlots.length === 0 ? (
                 <Typography>Bu tarihte uygun saat bulunamadı.</Typography>
             ) : (
-                <Grid container spacing={2}>
-                    {timeSlots.map((slot, i) => (
-                        <Grid size={4} key={i}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                onClick={() => handleSelectTime(slot)}
+                <Grid container spacing={1}>
+                    {timeSlots.map((slot, i) => {
+                        const timePart = slot?.split("T")[1];
+                        const displayHour = timePart ? timePart.slice(0, 5) : "--:--";
+
+                        return (
+                            <Grid
+                                size={{
+                                    xs: 6,
+                                    sm: 4,
+                                    md: 3
+                                }}
+
+                                key={i}
+                                sx={{ mb: 2 }}
                             >
-                                {slot.split("T")[1].slice(0, 5)}
-                            </Button>
-                        </Grid>
-                    ))}
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{
+                                        py: 1.2,
+                                        borderRadius: 2,
+                                        fontWeight: "bold",
+                                        fontSize: "1rem",
+                                    }}
+                                    onClick={() => handleSelectTime(slot)}
+                                >
+                                    {displayHour}
+                                </Button>
+                            </Grid>
+                        );
+                    })}
                 </Grid>
             )}
 
@@ -152,7 +199,7 @@ const SelectDatePage = () => {
                     branch: branchId || "",
                     department: departmentId || "",
                     doctor: doctorId || "",
-                    date: selectedDay,
+                    date: selectedDay?.format("YYYY-MM-DD") || "",
                 }}
             />
 

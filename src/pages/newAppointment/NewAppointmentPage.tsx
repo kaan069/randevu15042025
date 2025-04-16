@@ -9,11 +9,11 @@ import { useNavigate } from "react-router-dom";
 import {
     fetchHospitals,
     fetchBranches,
-} from "../state/appointmentState";
+} from "../../state/appointmentState";
 
-import { useAppointmentState } from "../state/appointmentState";
-import SearchableSelect from "../components/common/SearchableSelect";
-import HospitalList from "../components/common/HospitalList";
+import { useAppointmentState } from "../../state/appointmentState";
+import SearchableSelect from "../../components/common/SearchableSelect";
+import HospitalList from "../../components/common/HospitalList";
 
 const NewAppointmentPage = () => {
     const navigate = useNavigate();
@@ -50,13 +50,14 @@ const NewAppointmentPage = () => {
             console.error("Branşlar alınamadı", err);
         }
     };
+    console.log("API URL:", process.env.REACT_APP_SOAP_BASE_URL);
 
     return (
         <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, px: 2 }}>
             <Button
                 variant="outlined"
                 color="secondary"
-                onClick={() => navigate("/home")}
+                onClick={() => navigate("/")}
                 sx={{ mb: 2 }}
             >
                 ← Ana Sayfaya Dön

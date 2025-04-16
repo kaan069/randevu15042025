@@ -5,11 +5,11 @@ import {
   Button,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchDepartments } from "../state/appointmentState";
-import { useAppointmentState } from "../state/appointmentState";
+import { fetchDepartments } from "../../state/appointmentState";
+import { useAppointmentState } from "../../state/appointmentState";
 
-import SearchableSelect from "../components/common/SearchableSelect";
-import DepartmentList from "../components/common/DepartmentList";
+import SearchableSelect from "../../components/common/SearchableSelect";
+import DepartmentList from "../../components/common/DepartmentList";
 
 const SelectDepartmentPage = () => {
   const { hospitalId, branchId } = useParams<{ hospitalId: string; branchId: string }>();

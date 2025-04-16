@@ -52,7 +52,7 @@ export const fetchEmptySlots = async (
     startTime: string,
     endTime: string,
     date: string
-): Promise<boolean> => {
+): Promise<string[]> => {
     const [xml] = await getEmptySlotsForDoctor(
         hospitalId,
         departmentId,
@@ -60,7 +60,7 @@ export const fetchEmptySlots = async (
         startTime,
         endTime
     );
-    return parseEmptySlotsXML(xml, date);
+    return parseEmptySlotsXML(xml); // string[] döndürdüğünü TypeScript de bilir
 };
 export const useAppointmentState = () => {
     const [hospitals, setHospitals] = useState<Hospital[]>([]);

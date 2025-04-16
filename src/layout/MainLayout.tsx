@@ -13,9 +13,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         >
             {/* Üst Logo Alanı */}
             <Box sx={{ bgcolor: "#f5f5f5", py: 2, px: 4 }}>
+            </Box>
+            <Box mt={3} display="flex" justifyContent="center">
                 <Logo />
             </Box>
-
             {/* Sayfa İçeriği */}
             <Container sx={{ mt: 4, flexGrow: 1 }}>
                 {children}

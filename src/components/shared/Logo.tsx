@@ -1,11 +1,20 @@
 // src/components/shared/Logo.tsx
 import React from "react";
-import { Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
-const Logo = () => (
-    <Typography variant="h6" fontWeight="bold">
-        BizMed
-    </Typography>
-);
+const Logo: React.FC = () => {
+    return (
+        <Box>
+            <img
+                src="/assets/bizmed-logo.png"
+                alt="BizMed Logo"
+                style={{
+                    maxWidth: 350,
+                    height: "auto",
+                }}
+            />
+        </Box>
+    );
+};
 
 export default Logo;

@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import { Box, Grid, Button, Typography } from "@mui/material";
-//import NewAppointment from "../../components/Home/NewAppointment";
-import AppointmentCancellation from "../../components/Home/AppointmentCancellation";
+import { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import NewAppointmentPage from "../../pages/NewAppointmentPage";
-import AvailableAppointmentPage from "../../pages/AvailableAppoimentPage";
+import NewAppointmentPage from "../../pages/newAppointment/NewAppointmentPage";
+import AvailableAppointmentPage from "../../pages/availableAppointment/AvailableAppoimentPage";
+import AppointmentCancellationPage from "../../pages/appointmentCancellation/AppointmentCancellationPage";
 
 const HomePage = () => {
   const [activeComponent] = useState<string | null>(null);
@@ -12,10 +11,6 @@ const HomePage = () => {
 
   return (
     <Box>
-      {/* Logo */}
-      <Grid container justifyContent="center" alignItems="center" direction="column" sx={{ marginBottom: 3 }}>
-        <img src="/logo512.png" alt="Logo" style={{ maxWidth: "50px" }} />
-      </Grid>
 
       {/* Ana Başlık */}
       <Typography variant="h4" align="center" gutterBottom>
@@ -52,7 +47,7 @@ const HomePage = () => {
       {/* Tıklanan Component */}
       <Box sx={{ mt: 5 }}>
         {activeComponent === "new" && <NewAppointmentPage />}
-        {activeComponent === "cancel" && <AppointmentCancellation />}
+        {activeComponent === "cancel" && <AppointmentCancellationPage />}
         {activeComponent === "available" && <AvailableAppointmentPage />}
       </Box>
     </Box>

@@ -41,9 +41,12 @@ const NewAppointmentModal: React.FC<AppointmentModalProps> = ({
         <Typography variant="body1" gutterBottom>
           <strong>Tarih:</strong> {appointmentData.date}
         </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>Randevu Kodu:</strong> {appointmentData.date} {/*randevu kodu gelecek*/}
+        </Typography>
 
         <Button variant="contained" color="primary" fullWidth onClick={handleClose}>
-          Kapat
+          Onay
         </Button>
       </Box>
     </Modal>
